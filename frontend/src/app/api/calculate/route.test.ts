@@ -1,3 +1,4 @@
+/// <reference types="vitest/globals" />
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { NextRequest } from 'next/server'
 import { POST, GET } from './route'
@@ -211,7 +212,7 @@ describe('Premium Calculator API', () => {
             })),
           })),
         })),
-      }) as ReturnType<typeof supabase.from>)
+      }) as unknown as ReturnType<typeof supabase.from>)
 
       const request = new NextRequest('http://localhost/api/calculate', {
         method: 'POST',
@@ -287,7 +288,7 @@ describe('Premium Calculator API', () => {
             })),
           })),
         })),
-      }) as ReturnType<typeof supabase.from>)
+      }) as unknown as ReturnType<typeof supabase.from>)
 
       const request = new NextRequest('http://localhost/api/calculate', {
         method: 'POST',
@@ -327,7 +328,7 @@ describe('Premium Calculator API', () => {
             })),
           })),
         })),
-      }) as ReturnType<typeof supabase.from>)
+      }) as unknown as ReturnType<typeof supabase.from>)
 
       const request = new NextRequest('http://localhost/api/calculate', {
         method: 'POST',
