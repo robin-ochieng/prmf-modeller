@@ -125,21 +125,36 @@ export async function POST(request: NextRequest): Promise<NextResponse<Calculate
     const { age, benefit_option, family_size } = validation.data
 
     // Query Supabase for the premium rate
+    // Using maybeSingle() instead of single() to avoid PGRST116 errors when no row found
     const { data: rates, error: dbError } = await supabase
       .from('premium_rates')
       .select('*')
       .eq('age', age)
       .eq('family_size', family_size)
-      .single()
+      .maybeSingle()
 
-    if (dbError || !rates) {
+    if (dbError) {
       console.error('Database error:', dbError)
       return NextResponse.json(
         {
           success: false,
           error: {
+            code: 'DATABASE_ERROR',
+            message: 'An error occurred while fetching premium rates. Please try again.',
+          },
+        },
+        { status: 500 }
+      )
+    }
+
+    if (!rates) {
+      console.warn(`No premium rate found for age ${age}, family_size ${family_size}`)
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
             code: 'RATE_NOT_FOUND',
-            message: `No premium rate found for age ${age} and family size ${family_size}`,
+            message: `No premium rate found for age ${age} and family size ${family_size}. Please contact support.`,
           },
         },
         { status: 404 }

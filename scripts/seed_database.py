@@ -43,9 +43,9 @@ def read_excel_rates(file_path: str) -> pd.DataFrame:
     
     records = []
     
-    # Process M Only - Retirees Lumpsum (rows 1-30, ages 90-61)
+    # Process M Only - Retirees Lumpsum (rows 2-31, ages 90-61, skip header at row 1)
     print("   Processing M Only - Lumpsum (ages 90-61)...")
-    for i in range(1, 31):
+    for i in range(2, 32):
         try:
             age = int(df.iloc[i, 0])
             records.append({
@@ -60,9 +60,9 @@ def read_excel_rates(file_path: str) -> pd.DataFrame:
         except (ValueError, TypeError) as e:
             print(f"   Warning: Skipping row {i} (M Lumpsum): {e}")
     
-    # Process M+1 - Retirees Lumpsum (rows 1-30, ages 90-61)
+    # Process M+1 - Retirees Lumpsum (rows 2-31, ages 90-61, skip header at row 1)
     print("   Processing M+1 - Lumpsum (ages 90-61)...")
-    for i in range(1, 31):
+    for i in range(2, 32):
         try:
             age = int(df.iloc[i, 7])
             records.append({
@@ -77,9 +77,9 @@ def read_excel_rates(file_path: str) -> pd.DataFrame:
         except (ValueError, TypeError) as e:
             print(f"   Warning: Skipping row {i} (M+1 Lumpsum): {e}")
     
-    # Process M Only - Annual (rows 36-78, ages 60-18)
+    # Process M Only - Annual (rows 37-79, ages 60-18, skip header at row 36)
     print("   Processing M Only - Annual (ages 60-18)...")
-    for i in range(36, 79):
+    for i in range(37, 80):
         try:
             age = int(df.iloc[i, 0])
             records.append({
@@ -94,9 +94,9 @@ def read_excel_rates(file_path: str) -> pd.DataFrame:
         except (ValueError, TypeError) as e:
             print(f"   Warning: Skipping row {i} (M Annual): {e}")
     
-    # Process M+1 - Annual (rows 36-78, ages 60-18)
+    # Process M+1 - Annual (rows 37-79, ages 60-18, skip header at row 36)
     print("   Processing M+1 - Annual (ages 60-18)...")
-    for i in range(36, 79):
+    for i in range(37, 80):
         try:
             age = int(df.iloc[i, 7])
             records.append({
@@ -116,7 +116,7 @@ def read_excel_rates(file_path: str) -> pd.DataFrame:
 
 def upload_to_supabase(df: pd.DataFrame, supabase: Client) -> dict:
     """
-    Upload DataFrame to Supabase premium_rates table.
+    Upload DataFrame to Supabase premium_rates table using upsert.
     
     Args:
         df: DataFrame with premium rates
@@ -128,24 +128,26 @@ def upload_to_supabase(df: pd.DataFrame, supabase: Client) -> dict:
     # Convert DataFrame to list of dictionaries
     records = df.to_dict('records')
     
-    # Clear existing data
-    print("   Clearing existing data...")
-    try:
-        supabase.table('premium_rates').delete().neq('id', 0).execute()
-    except Exception as e:
-        print(f"   Note: Could not clear existing data (table may be empty): {e}")
+    # Use upsert to insert or update records based on (age, family_size)
+    print("   Upserting records (insert or update)...")
     
-    # Insert records in batches
     batch_size = 50
-    total_inserted = 0
+    total_upserted = 0
     
     for i in range(0, len(records), batch_size):
         batch = records[i:i + batch_size]
-        response = supabase.table('premium_rates').insert(batch).execute()
-        total_inserted += len(batch)
-        print(f"   Inserted {total_inserted}/{len(records)} records...")
+        try:
+            response = supabase.table('premium_rates').upsert(
+                batch, 
+                on_conflict='age,family_size'
+            ).execute()
+            total_upserted += len(batch)
+            print(f"   Upserted {total_upserted}/{len(records)} records...")
+        except Exception as e:
+            print(f"   ✗ Error upserting batch: {e}")
+            return {'error': str(e)}
     
-    return {'total_records': total_inserted}
+    return {'total_records': total_upserted}
 
 
 def verify_import(supabase: Client):

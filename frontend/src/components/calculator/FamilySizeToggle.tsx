@@ -42,34 +42,28 @@ export function FamilySizeToggle({ value, onChange, error }: FamilySizeTogglePro
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              {/* Animated background */}
+              {/* Static gradient background when selected - no infinite animation */}
               {isSelected && (
-                <motion.div
-                  className="absolute inset-0 rounded-xl overflow-hidden"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
+                <div
+                  className="absolute inset-0 rounded-xl overflow-hidden opacity-100"
                 >
-                  <motion.div
+                  <div
                     className="absolute -inset-1 bg-gradient-to-r from-primary-400/20 via-blue-400/20 to-primary-400/20"
-                    animate={{ x: ['-100%', '100%'] }}
-                    transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
                   />
-                </motion.div>
+                </div>
               )}
 
               <div className="relative flex flex-col items-center text-center gap-3">
-                <motion.div
+                <div
                   className={cn(
-                    'w-14 h-14 rounded-full flex items-center justify-center',
+                    'w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300',
                     isSelected
                       ? 'bg-primary-500 text-white'
                       : 'bg-gray-100 text-gray-500'
                   )}
-                  animate={isSelected ? { scale: [1, 1.1, 1] } : {}}
-                  transition={{ duration: 0.5 }}
                 >
                   <Icon className="w-7 h-7" />
-                </motion.div>
+                </div>
 
                 <div>
                   <div className={cn(

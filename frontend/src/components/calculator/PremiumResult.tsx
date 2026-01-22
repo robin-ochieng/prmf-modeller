@@ -33,17 +33,19 @@ export function PremiumResult({ result, isVisible }: PremiumResultProps) {
           transition={{ duration: 0.5, ease: 'easeOut' }}
           className="overflow-hidden"
         >
-          <div className="mt-8 relative">
-            {/* Decorative elements */}
+          <div className="mt-8 relative group">
+            {/* Decorative elements - animate on hover only */}
             <motion.div
               className="absolute -top-4 -left-4 w-24 h-24 bg-gradient-to-br from-primary-400/20 to-blue-400/20 rounded-full blur-2xl"
-              animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.8, 0.5] }}
-              transition={{ duration: 3, repeat: Infinity }}
+              initial={{ scale: 1, opacity: 0.5 }}
+              whileHover={{ scale: 1.2, opacity: 0.8 }}
+              transition={{ duration: 0.3 }}
             />
             <motion.div
               className="absolute -bottom-4 -right-4 w-32 h-32 bg-gradient-to-br from-amber-400/20 to-orange-400/20 rounded-full blur-2xl"
-              animate={{ scale: [1.2, 1, 1.2], opacity: [0.5, 0.8, 0.5] }}
-              transition={{ duration: 3, repeat: Infinity, delay: 0.5 }}
+              initial={{ scale: 1, opacity: 0.5 }}
+              whileHover={{ scale: 1.2, opacity: 0.8 }}
+              transition={{ duration: 0.3 }}
             />
 
             {/* Result Card */}
