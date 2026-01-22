@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence, LazyMotion, domAnimation } from 'framer-motion'
+import Image from 'next/image'
 import { Calculator, Sparkles, Shield, TrendingUp } from 'lucide-react'
 import { Button, Card, CalculatingAnimation } from '@/components/ui'
 import { AgeSlider, BenefitSelector, FamilySizeToggle, PremiumResult } from '@/components/calculator'
@@ -118,6 +119,29 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
+          <motion.div
+            className="flex items-center justify-center gap-3 md:gap-4 mb-4"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.15 }}
+          >
+            <div className="rounded-2xl bg-white/80 p-2 shadow-lg shadow-primary-200/40 ring-1 ring-primary-100">
+              <Image
+                src="/kenbrigt_logo.png"
+                alt="Kenbright logo"
+                width={72}
+                height={72}
+                className="h-14 w-14 md:h-16 md:w-16 object-contain"
+                priority
+              />
+            </div>
+            <div className="text-left">
+              <p className="text-xs uppercase tracking-[0.2em] text-primary-600 font-semibold">Kenbright</p>
+              <p className="text-lg md:text-xl font-semibold text-gray-900">PRMF Premium Calculator</p>
+              <p className="text-sm text-gray-500">Tailored health cover insights</p>
+            </div>
+          </motion.div>
+
           <motion.div
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-100 text-primary-700 text-sm font-medium mb-6"
             initial={{ opacity: 0, scale: 0.8 }}
