@@ -171,19 +171,6 @@ export function PremiumResult({ result, isVisible }: PremiumResultProps) {
                   </p>
                 </div>
               </motion.div>
-
-              {/* CTA */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.7 }}
-                className="px-6 pb-6"
-              >
-                <button className="w-full py-4 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-white font-semibold flex items-center justify-center gap-2 transition-all duration-300 shadow-lg shadow-amber-500/30 hover:shadow-xl hover:shadow-amber-500/40">
-                  Get Started
-                  <ArrowRight className="w-5 h-5" />
-                </button>
-              </motion.div>
             </motion.div>
           </div>
         </motion.div>

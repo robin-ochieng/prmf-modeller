@@ -202,7 +202,7 @@ export default function Home() {
             >
               <h1 className="text-3xl md:text-4xl font-bold mb-3">
                 <span className="text-gradient">PRMF</span>{' '}
-                <span className="text-gray-900">Calculator</span>
+                <span className="text-gray-900">Premium Rate Calculator</span>
               </h1>
               <p className="text-gray-600 text-sm md:text-base max-w-2xl mx-auto">
                 Calculate your medical insurance premium based on age, benefit option, and family size. Get instant personalized quotes.
