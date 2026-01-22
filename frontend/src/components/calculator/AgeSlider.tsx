@@ -1,8 +1,9 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@/lib/utils'
-import { Calendar, Minus, Plus } from 'lucide-react'
+import { Calendar, Minus, Plus, Info } from 'lucide-react'
 
 interface AgeSliderProps {
   value: number
@@ -11,6 +12,7 @@ interface AgeSliderProps {
 }
 
 export function AgeSlider({ value, onChange, error }: AgeSliderProps) {
+  const [isHovered, setIsHovered] = useState(false)
   const minAge = 18
   const maxAge = 90
   const percentage = ((value - minAge) / (maxAge - minAge)) * 100
@@ -31,7 +33,29 @@ export function AgeSlider({ value, onChange, error }: AgeSliderProps) {
   const category = getAgeCategory(value)
 
   return (
-    <div className="space-y-4">
+    <div 
+      className="space-y-4 relative p-4 rounded-xl transition-all duration-300 hover:bg-primary-50/50"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      {/* Hover tooltip */}
+      <AnimatePresence>
+        {isHovered && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            className="absolute -top-10 left-1/2 -translate-x-1/2 z-10 px-4 py-2 bg-gray-900 text-white text-xs rounded-lg shadow-lg whitespace-nowrap"
+          >
+            <div className="flex items-center gap-2">
+              <Info className="w-3 h-3" />
+              Enter your current age (18-90 years)
+            </div>
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-2 h-2 bg-gray-900 rotate-45" />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="flex items-center justify-between">
         <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
           <Calendar className="w-4 h-4" />
