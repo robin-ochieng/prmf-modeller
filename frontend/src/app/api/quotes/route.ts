@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@supabase/supabase-js'
 
 export interface QuoteHistoryItem {
   id: string
@@ -44,6 +44,32 @@ export async function GET(request: NextRequest): Promise<NextResponse<QuoteHisto
     }
 
     const token = authHeader.substring(7)
+    
+    // Create authenticated Supabase client with user's token
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    
+    if (!supabaseUrl || !supabaseAnonKey) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: 'CONFIGURATION_ERROR',
+            message: 'Server configuration error.',
+          },
+        },
+        { status: 500 }
+      )
+    }
+    
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      global: {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    })
+    
     const { data: { user }, error: authError } = await supabase.auth.getUser(token)
 
     if (authError || !user) {
@@ -59,7 +85,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<QuoteHisto
       )
     }
 
-    // Fetch quote history for the user
+    // Fetch quote history for the user (RLS will filter by auth.uid())
     const { data: quotes, error: dbError } = await supabase
       .from('quote_history')
       .select('id, age, benefit_option, family_size, premium_amount, payment_type, benefit_name, created_at')
