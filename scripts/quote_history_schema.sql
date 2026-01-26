@@ -37,8 +37,18 @@ CREATE POLICY "Users can view own quotes" ON quote_history
     FOR SELECT
     USING (auth.uid() = user_id);
 
--- Policy: Users can insert their own quotes
-CREATE POLICY "Users can insert own quotes" ON quote_history
+-- Policy: Users can insert their own quotes (user_id must match or be null for anonymous)
+CREATE POLICY "Users can insert quotes" ON quote_history
+    FOR INSERT
+    WITH CHECK (user_id IS NULL OR auth.uid() = user_id);
+
+-- Policy: Allow anonymous inserts (for non-authenticated users - analytics tracking)
+CREATE POLICY "Allow anonymous quote inserts" ON quote_history
+    FOR INSERT
+    WITH CHECK (user_id IS NULL);
+
+-- Policy: Allow authenticated users to insert with their user_id
+CREATE POLICY "Authenticated users can insert quotes" ON quote_history
     FOR INSERT
     WITH CHECK (auth.uid() = user_id);
 
@@ -46,12 +56,6 @@ CREATE POLICY "Users can insert own quotes" ON quote_history
 CREATE POLICY "Service role has full access" ON quote_history
     FOR ALL
     USING (auth.role() = 'service_role');
-
--- Optional: Allow anonymous inserts for non-authenticated users (analytics only)
--- Uncomment if you want to track anonymous quotes
--- CREATE POLICY "Allow anonymous inserts" ON quote_history
---     FOR INSERT
---     WITH CHECK (user_id IS NULL);
 
 COMMENT ON TABLE quote_history IS 'Stores premium calculation history for users and analytics';
 COMMENT ON COLUMN quote_history.user_id IS 'Reference to authenticated user, NULL for anonymous quotes';

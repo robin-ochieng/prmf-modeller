@@ -86,11 +86,11 @@ export function QuoteHistory() {
     >
       <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-100 shadow-lg overflow-hidden">
         {/* Header - Clickable to expand/collapse */}
-        <button
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
-        >
-          <div className="flex items-center gap-3">
+        <div className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors">
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="flex items-center gap-3 flex-1"
+          >
             <div className="p-2 bg-primary-100 rounded-lg">
               <History className="w-5 h-5 text-primary-600" />
             </div>
@@ -100,27 +100,29 @@ export function QuoteHistory() {
                 {quotes.length > 0 ? `${quotes.length} previous quotes` : 'View your previous calculations'}
               </p>
             </div>
-          </div>
+          </button>
           <div className="flex items-center gap-2">
             {isExpanded && (
               <button
-                onClick={(e) => {
-                  e.stopPropagation()
-                  fetchQuotes()
-                }}
+                onClick={fetchQuotes}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                 title="Refresh"
               >
                 <RefreshCw className={`w-4 h-4 text-gray-500 ${loading ? 'animate-spin' : ''}`} />
               </button>
             )}
-            {isExpanded ? (
-              <ChevronUp className="w-5 h-5 text-gray-400" />
-            ) : (
-              <ChevronDown className="w-5 h-5 text-gray-400" />
-            )}
+            <button
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="p-1"
+            >
+              {isExpanded ? (
+                <ChevronUp className="w-5 h-5 text-gray-400" />
+              ) : (
+                <ChevronDown className="w-5 h-5 text-gray-400" />
+              )}
+            </button>
           </div>
-        </button>
+        </div>
 
         {/* Content */}
         <AnimatePresence>

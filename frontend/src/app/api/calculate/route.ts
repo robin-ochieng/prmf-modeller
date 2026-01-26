@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
+import { createClient } from '@supabase/supabase-js'
 import {
   CalculateRequest,
   CalculateResponse,
@@ -182,37 +183,44 @@ export async function POST(request: NextRequest): Promise<NextResponse<Calculate
     const benefitName = BENEFIT_OPTIONS[benefit_option]
 
     // Save quote to history (non-blocking, don't fail if this errors)
-    // Extract user ID from Authorization header if present
+    // Extract user token from Authorization header if present
     const authHeader = request.headers.get('authorization')
-    let userId: string | null = null
     
     if (authHeader?.startsWith('Bearer ')) {
-      try {
-        const token = authHeader.substring(7)
-        const { data: { user } } = await supabase.auth.getUser(token)
-        userId = user?.id || null
-      } catch {
-        // Silently ignore auth errors for quote saving
+      const token = authHeader.substring(7)
+      
+      // Create an authenticated Supabase client with the user's token
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+      const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+      
+      if (supabaseUrl && supabaseAnonKey) {
+        const authClient = createClient(supabaseUrl, supabaseAnonKey, {
+          global: {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        })
+        
+        // Save quote history with authenticated client
+        authClient
+          .from('quote_history')
+          .insert({
+            user_id: (await authClient.auth.getUser()).data.user?.id,
+            age,
+            benefit_option,
+            family_size,
+            premium_amount: premiumAmount,
+            payment_type: paymentType,
+            benefit_name: benefitName,
+          })
+          .then(({ error }) => {
+            if (error) {
+              console.error('Failed to save quote history:', error)
+            }
+          })
       }
     }
-
-    // Save quote history asynchronously (fire and forget)
-    supabase
-      .from('quote_history')
-      .insert({
-        user_id: userId,
-        age,
-        benefit_option,
-        family_size,
-        premium_amount: premiumAmount,
-        payment_type: paymentType,
-        benefit_name: benefitName,
-      })
-      .then(({ error }) => {
-        if (error) {
-          console.error('Failed to save quote history:', error)
-        }
-      })
 
     // Return success response
     return NextResponse.json({
