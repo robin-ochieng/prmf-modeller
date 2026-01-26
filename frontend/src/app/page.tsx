@@ -5,13 +5,13 @@ import { motion, AnimatePresence, LazyMotion, domAnimation } from 'framer-motion
 import { Calculator, LogIn, UserPlus, LogOut, User } from 'lucide-react'
 import Image from 'next/image'
 import { Button, Card, CalculatingAnimation } from '@/components/ui'
-import { AgeSlider, BenefitSelector, FamilySizeToggle, PremiumResult } from '@/components/calculator'
+import { AgeSlider, BenefitSelector, FamilySizeToggle, PremiumResult, QuoteHistory } from '@/components/calculator'
 import { BenefitOption, FamilySize, CalculateSuccessResponse } from '@/types'
 import { useAuth } from '@/contexts/AuthContext'
 
 export default function Home() {
   // Auth
-  const { user, loading: authLoading, setShowAuthModal, setAuthModalView, signOut } = useAuth()
+  const { user, session, loading: authLoading, setShowAuthModal, setAuthModalView, signOut } = useAuth()
 
   // Form state
   const [age, setAge] = useState<number>(35)
@@ -65,11 +65,18 @@ export default function Home() {
     setShowResult(false)
 
     try {
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      }
+      
+      // Include auth token if user is logged in (for quote history)
+      if (session?.access_token) {
+        headers['Authorization'] = `Bearer ${session.access_token}`
+      }
+
       const response = await fetch('/api/calculate', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
         body: JSON.stringify({
           age,
           benefit_option: benefitOption,
@@ -328,6 +335,9 @@ export default function Home() {
               )}
             </AnimatePresence>
           </Card>
+
+          {/* Quote History - Only visible for authenticated users */}
+          <QuoteHistory />
 
           {/* Footer */}
           <motion.footer

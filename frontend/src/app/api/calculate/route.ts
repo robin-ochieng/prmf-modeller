@@ -179,6 +179,40 @@ export async function POST(request: NextRequest): Promise<NextResponse<Calculate
     // Get the premium amount for the selected option
     const premiumAmount = rates[benefit_option] as number
     const paymentType = getPaymentType(age)
+    const benefitName = BENEFIT_OPTIONS[benefit_option]
+
+    // Save quote to history (non-blocking, don't fail if this errors)
+    // Extract user ID from Authorization header if present
+    const authHeader = request.headers.get('authorization')
+    let userId: string | null = null
+    
+    if (authHeader?.startsWith('Bearer ')) {
+      try {
+        const token = authHeader.substring(7)
+        const { data: { user } } = await supabase.auth.getUser(token)
+        userId = user?.id || null
+      } catch {
+        // Silently ignore auth errors for quote saving
+      }
+    }
+
+    // Save quote history asynchronously (fire and forget)
+    supabase
+      .from('quote_history')
+      .insert({
+        user_id: userId,
+        age,
+        benefit_option,
+        family_size,
+        premium_amount: premiumAmount,
+        payment_type: paymentType,
+        benefit_name: benefitName,
+      })
+      .then(({ error }) => {
+        if (error) {
+          console.error('Failed to save quote history:', error)
+        }
+      })
 
     // Return success response
     return NextResponse.json({
