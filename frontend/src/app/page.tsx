@@ -137,7 +137,7 @@ export default function Home() {
               <>
                 <div className="hidden sm:flex items-center gap-2 text-sm text-gray-600">
                   <User className="w-4 h-4" />
-                  <span className="max-w-[150px] truncate">{user.email}</span>
+                  <span className="max-w-[150px] truncate">{user.user_metadata?.full_name || user.email}</span>
                 </div>
                 <button
                   onClick={() => signOut()}

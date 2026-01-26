@@ -265,7 +265,14 @@ export function AuthModal() {
 
             {/* Terms */}
             <p className="text-xs text-gray-400 text-center mt-4 sm:mt-6">
-              By continuing, you agree to our Terms of Service and Privacy Policy
+              By continuing, you agree to our{' '}
+              <a href="/terms" className="text-primary-500 hover:text-primary-600 hover:underline transition-colors">
+                Terms of Service
+              </a>
+              {' '}and{' '}
+              <a href="/privacy" className="text-primary-500 hover:text-primary-600 hover:underline transition-colors">
+                Privacy Policy
+              </a>
             </p>
           </div>
         </motion.div>
