@@ -188,9 +188,9 @@ function CountUpAnimation({ value }: { value: number }) {
       key={value}
     >
       {new Intl.NumberFormat('en-KE', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      }).format(value)}
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(Math.round(value))}
     </motion.span>
   )
 }

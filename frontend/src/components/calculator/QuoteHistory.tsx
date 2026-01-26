@@ -75,7 +75,7 @@ export function QuoteHistory() {
       currency: 'KES',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(amount)
+    }).format(Math.round(amount))
   }
 
   return (
