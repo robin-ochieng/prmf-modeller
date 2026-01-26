@@ -107,6 +107,21 @@ function validateRequest(body: unknown): { valid: true; data: CalculateRequest }
  */
 export async function POST(request: NextRequest): Promise<NextResponse<CalculateResponse>> {
   try {
+    // Check if Supabase is properly configured
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      console.error('Missing Supabase environment variables in production')
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: 'CONFIGURATION_ERROR',
+            message: 'Server configuration error. Please contact support.',
+          },
+        },
+        { status: 500 }
+      )
+    }
+
     // Parse request body
     const body = await request.json()
 
