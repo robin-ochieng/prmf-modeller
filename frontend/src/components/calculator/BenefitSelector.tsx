@@ -13,10 +13,10 @@ interface BenefitSelectorProps {
 }
 
 const benefitDetails: Record<BenefitOption, { description: string; color: string }> = {
-  option_1: { description: 'Basic coverage for essential needs', color: 'from-blue-400 to-blue-500' },
-  option_2: { description: 'Enhanced coverage with added benefits', color: 'from-teal-400 to-teal-500' },
-  option_3: { description: 'Comprehensive coverage for peace of mind', color: 'from-indigo-400 to-indigo-500' },
-  option_4: { description: 'Premium coverage with maximum protection', color: 'from-amber-400 to-amber-500' },
+  option_1: { description: 'Essential coverage', color: 'from-blue-400 to-blue-500' },
+  option_2: { description: 'Standard coverage', color: 'from-teal-400 to-teal-500' },
+  option_3: { description: 'Extended coverage', color: 'from-indigo-400 to-indigo-500' },
+  option_4: { description: 'Maximum coverage', color: 'from-amber-400 to-amber-500' },
 }
 
 export function BenefitSelector({ value, onChange, error }: BenefitSelectorProps) {

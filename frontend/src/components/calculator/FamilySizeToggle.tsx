@@ -16,7 +16,7 @@ export function FamilySizeToggle({ value, onChange, error }: FamilySizeTogglePro
   const [isHovered, setIsHovered] = useState(false)
   const options: { key: FamilySize; icon: typeof User; description: string }[] = [
     { key: 'M', icon: User, description: 'Coverage for principal member only' },
-    { key: 'M+1', icon: Users, description: 'Coverage for principal member and spouse' },
+    { key: 'M+1', icon: Users, description: 'Coverage for principal member and one spouse' },
   ]
 
   return (
