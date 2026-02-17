@@ -5,7 +5,7 @@ import { motion, AnimatePresence, LazyMotion, domAnimation } from 'framer-motion
 import { Calculator, LogIn, UserPlus, LogOut, User } from 'lucide-react'
 import Image from 'next/image'
 import { Button, Card, CalculatingAnimation } from '@/components/ui'
-import { AgeSlider, BenefitSelector, FamilySizeToggle, PremiumResult, QuoteHistory } from '@/components/calculator'
+import { AgeSlider, BenefitSelector, FamilySizeToggle, PremiumResult, PRMFInfo, QuoteHistory } from '@/components/calculator'
 import { BenefitOption, FamilySize, CalculateSuccessResponse } from '@/types'
 import { useAuth } from '@/contexts/AuthContext'
 
@@ -214,6 +214,7 @@ export default function Home() {
               <p className="text-gray-600 text-sm md:text-base max-w-2xl mx-auto">
                 Calculate your medical insurance premium based on age, benefit option, and family size. Get instant personalized quotes.
               </p>
+              <PRMFInfo />
             </motion.div>
 
             <AnimatePresence mode="wait">
